@@ -1,0 +1,57 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world
+  annotations: {}
+spec:
+  selector:
+    matchLabels:
+      app: hello-world
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: hello-world
+    spec:
+      containers:
+        - name: container
+          image: 'quay.io/avillega/hello-pod:1.0'
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            runAsNonRoot: true
+            seccompProfile:
+              type: "RuntimeDefault"
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          env:
+            - name: PORT
+              value: '8080'
+          imagePullPolicy: Always
+      imagePullSecrets: []
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  paused: false
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-world
+spec:
+  selector:
+    app: hello-world
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+
