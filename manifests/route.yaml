@@ -7,7 +7,7 @@ metadata:
     labels:
       global-balancer: hello-world
 spec:
-  host: hello.tcf.kni.syseng.devcluster.openshift.com
+  host: hello.global.kni.syseng.devcluster.openshift.com
   to:
     kind: Service
     name: hello-world
