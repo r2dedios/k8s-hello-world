@@ -16,6 +16,11 @@ spec:
     spec:
       containers:
         - name: container
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+              scheme: HTTP
           resources:
             requests:
               cpu: 50m
