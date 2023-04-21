@@ -27,7 +27,7 @@ spec:
             requests:
               cpu: 50m
               memory: 10M
-          image: 'quay.io/avillega/hello-pod:1.0'
+          image: 'quay.io/avillega/hello-pod:1.1'
           securityContext:
             capabilities:
               drop:

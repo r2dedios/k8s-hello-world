@@ -39,6 +39,19 @@ func getIPList(hostname string) string {
 	return ipList
 }
 
+func healthzHandler(w http.ResponseWriter, r *http.Request) {
+	response := `
+<html>
+<head><title>Hello Pod</title></head>
+<body>
+<div>Ok</div>
+</body>
+</html>
+`
+	fmt.Fprintln(w, response)
+	fmt.Println("Healthz requested")
+}
+
 func helloHandler(w http.ResponseWriter, r *http.Request) {
 	hostname := getHostname()
 	user := getUser()
@@ -56,7 +69,7 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 `
 
 	fmt.Fprintln(w, response)
-	fmt.Println("Servicing an impatient beginner's request.")
+	fmt.Println("Saying hello!")
 }
 
 func listenAndServe(port string) {
@@ -68,6 +81,7 @@ func listenAndServe(port string) {
 }
 
 func main() {
+	http.HandleFunc("/healthz", healthzHandler)
 	http.HandleFunc("/", helloHandler)
 	port := os.Getenv("PORT")
 	if len(port) == 0 {
