@@ -17,8 +17,6 @@ spec:
       containers:
         - name: container
           readinessProbe:
-            initialDelaySeconds: 3
-            periodSeconds: 30
             httpGet:
               path: /healthz
               port: 8080
