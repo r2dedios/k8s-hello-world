@@ -18,7 +18,7 @@ spec:
         - name: container
           readinessProbe:
             initialDelaySeconds: 3
-            periodSeconds: 5
+            periodSeconds: 10s
             httpGet:
               path: /
               port: 8080
