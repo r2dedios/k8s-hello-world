@@ -16,6 +16,14 @@ spec:
     spec:
       containers:
         - name: container
+          readinesProbe:
+            httpGet:
+              port: http
+              scheme: HTTP
+          resources:
+            requests:
+              cpu: 50m
+              memory: 10M
           image: 'quay.io/avillega/hello-pod:1.0'
           securityContext:
             capabilities:
@@ -29,6 +37,7 @@ spec:
             allowPrivilegeEscalation: false
           ports:
             - containerPort: 8080
+              name: http
               protocol: TCP
           env:
             - name: PORT
