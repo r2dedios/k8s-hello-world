@@ -8,7 +8,7 @@ spec:
   selector:
     matchLabels:
       app: hello-world
-  replicas: 2
+  replicas: 1
   template:
     metadata:
       labels:
@@ -20,7 +20,6 @@ spec:
             httpGet:
               path: /healthz
               port: 8080
-              scheme: HTTP
           resources:
             requests:
               cpu: 50m
