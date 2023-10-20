@@ -2,18 +2,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hello-world
-  annotations: {}
+  name: hello-pod
+  namespace: avillega-hello-pod
 spec:
   selector:
     matchLabels:
-      app: hello-world
+      app: hello-pod
   replicas: 1
   template:
     metadata:
       labels:
-        app: hello-world
+        app: hello-pod
     spec:
+      serviceAccountName: hello-pod
       containers:
         - name: container
           readinessProbe:
@@ -24,7 +25,7 @@ spec:
             requests:
               cpu: 50m
               memory: 10M
-          image: 'quay.io/avillega/hello-pod:1.1'
+          image: 'quay.io/avillega/hello-pod:1.2'
           securityContext:
             capabilities:
               drop:
@@ -55,12 +56,14 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: hello-world
+  name: hello-pod
+  namespace: avillega-hello-pod
 spec:
   selector:
-    app: hello-world
+    app: hello-pod
   ports:
-    - protocol: TCP
+    - name: http
+      protocol: TCP
       port: 8080
       targetPort: 8080
 

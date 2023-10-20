@@ -6,6 +6,11 @@ import (
 	"net/http"
 	"os"
 	"os/user"
+	"runtime"
+	"strconv"
+
+	gbs "github.com/inhies/go-bytesize"
+	"github.com/pbnjay/memory"
 )
 
 func getHostname() string {
@@ -27,14 +32,22 @@ func getUser() string {
 }
 
 func getIPList(hostname string) string {
-	ips, err := net.LookupIP(hostname)
+	ifaces, err := net.Interfaces()
 	if err != nil {
 		fmt.Println("getIPList: " + err.Error())
 		return "Not IPs Found"
 	}
 	ipList := ""
-	for _, ip := range ips {
-		ipList += "<div> Host IPs: " + ip.String() + "</div>"
+	for _, i := range ifaces {
+		addrs, err := i.Addrs()
+		if err != nil {
+			fmt.Println(err.Error())
+			continue
+		}
+
+		for _, a := range addrs {
+			ipList += fmt.Sprintf("<li> iface [%v]:  {%s}  (%s) </li>", i.Name, a.String(), a.Network())
+		}
 	}
 	return ipList
 }
@@ -52,18 +65,34 @@ func healthzHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Healthz requested")
 }
 
+func getCPUCoresCount() string {
+	return strconv.Itoa(runtime.NumCPU())
+}
+
+func getRAMCapacity() string {
+	bytes := gbs.New(float64(memory.TotalMemory()))
+	return bytes.String()
+}
+
 func helloHandler(w http.ResponseWriter, r *http.Request) {
 	hostname := getHostname()
 	user := getUser()
 	ipList := getIPList(hostname)
+	cpus := getCPUCoresCount()
+	memory := getRAMCapacity()
 	response := `
 <html>
 <head><title>Hello Pod</title></head>
 <body>
 <h1>Hello World Pod!</h1>
-<div> Hostname: ` + hostname + ` </div>
+<div> <b>Hostname:</b> ` + hostname + ` </div>
+<div> <b>Network Interfaces:</b>  </div>
+<ul>
 ` + ipList + `
-<div> User: ` + user + ` </div>
+</ul>
+<div> <b>User:</b> ` + user + ` </div>
+<div> <b>CPUs:</b> ` + cpus + ` </div>
+<div> <b>Memory:</b> ` + memory + ` </div>
 </body>
 </html>
 `

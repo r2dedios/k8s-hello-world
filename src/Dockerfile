@@ -2,11 +2,10 @@
 ## STEP 1: Build  ##
 ####################
 # Image Base
-FROM golang:1.18 AS builder
+FROM golang:1.21.3 AS builder
 
 # Code copy
-RUN mkdir /go/hello_world
-WORKDIR /go/hello_world
+WORKDIR /app
 COPY . .
 
 # Environment variable to Static-link compilation
@@ -19,7 +18,7 @@ ENV GOOS linux
 ENV GOARCH amd64
 
 # Run command
-RUN go build -o hello_world main.go
+RUN go build -o hello_pod ./src
 
 
 
@@ -28,12 +27,11 @@ RUN go build -o hello_world main.go
 ####################
 ## STEP 2: Run    ##
 ####################
-FROM scratch
+FROM registry.access.redhat.com/ubi8/ubi:8.8
 
-# Binary
-COPY --from=builder /go/hello_world/hello_world /hello_world
+COPY --from=builder /app/hello_pod /hello_pod
 
 EXPOSE 8080
 
-ENTRYPOINT ["/hello_world"]
+CMD ["/hello_pod"]
 

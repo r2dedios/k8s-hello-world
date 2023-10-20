@@ -2,18 +2,15 @@
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: hello-world
-  metadata:
-    labels:
-      global-balancer: hello-world
+  name: hello-pod
+  namespace: avillega-hello-pod
 spec:
-  host: hello.global.kni.syseng.devcluster.openshift.com
   to:
     kind: Service
-    name: hello-world
+    name: hello-pod
     weight: 100
   port:
-    targetPort: 8080
+    targetPort: http
   tls:
     termination: edge
   wildcardPolicy: None
